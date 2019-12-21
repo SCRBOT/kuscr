@@ -37,7 +37,9 @@ let oben = false;
 
 
 //start gui
+
 console.clear();
+telegrambot("ARBITRAGE gestartet")
 log(chalk.yellow("|- SECURUS ARBITRAGE v"+programversion+" -| " +chalk.green(" |- ALPHA -| ")));
 log();
 
@@ -112,6 +114,7 @@ function meldePreise()  {
   if (ticker.data.price <= 0.9994 && unter == false){
     telegrambot("Preis USDT : " + ticker.data.price + " würde kaufen")
     unter = true
+    oben = false
   }
 
   else if (ticker.data.price >= 0.9999 && oben == false){
@@ -120,6 +123,7 @@ function meldePreise()  {
     telegrambot("Preis USDT : " + ticker.data.price + " würde verkaufen. Trades: " + trades)
     
     oben = true
+    unter = false
   }
 }
 
@@ -278,6 +282,11 @@ function Sleep(milliseconds) {
 
 function trysell()  {
   if(ticker.data.price >= 0.9999 && orders.data.totalNum < settings.lines.length && orderactive == true)  {
+    
+    buyorders.data.items.forEach(element => {
+      cancel(element.id)
+    });
+
 
     orderid.forEach(element => {
       cancel(element)
@@ -286,7 +295,9 @@ function trysell()  {
     sell(shortid.generate(),"0.9999",usdt.balance)
 
 
-    
+    // buyorders.data.items.forEach(element => {
+    //   console.log(element.id)
+    // });
 
   }
 }
