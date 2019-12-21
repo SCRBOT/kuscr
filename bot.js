@@ -20,6 +20,8 @@ let programversion = "1.0.0"
 let ticker; //variable für preise
 let account; // walletinhalt
 let orders; //tradeinformation
+let buyorders = [];
+let sellorders = [];
 let orderid = []; // array mit den tradeids zum canceln
 let orderactive = false; // variable für order 
 
@@ -30,6 +32,8 @@ let tusd = 0.0;
 
 let trades = 0;   // anzahl trades
 let gewinnProzent = 0;
+let unter = false;
+let oben = false;
 
 
 //start gui
@@ -85,16 +89,40 @@ async function getTicker() {
       ticker = await api.getTicker(symbol)
       await getAccounts()  // wallet prüfen
       await getOrder()
+      await getBuysOrder()
+      await getSellsOrder()
+      
 
       await gui()  // zeige werte
       setzeOrder()
       trysell()
+      meldePreise()
+
+      
 
       
     } catch(err) {
       console.log(err)
     } 
   }
+
+//funktion telegrambenachrichtigung
+function meldePreise()  {
+  
+  if (ticker.data.price <= 0.9994 && unter == false){
+    telegrambot("Preis USDT : " + ticker.data.price + " würde kaufen")
+    unter = true
+  }
+
+  else if (ticker.data.price >= 0.9999 && oben == false){
+    trades++;
+  
+    telegrambot("Preis USDT : " + ticker.data.price + " würde verkaufen. Trades: " + trades)
+    
+    oben = true
+  }
+}
+
 
 //////////////////////////////////////////////
 // Wallet ansehen - zeige assets
@@ -118,15 +146,63 @@ async function getAccounts() {
   } 
 }
 
+//BUYS ORDER anzeigen
+async function getBuysOrder() {
+  
+  let params = {
+    status: 'active',
+    symbol: symbol,
+    side: 'buy'
+  }
+  try {
+    buyorders = await api.getOrders(params)
+    console.log("Kauforders: ")
+    buyorders.data.items.forEach(element => {
+      console.log(element.id)
+    });
+      //console.log(orders)
+      // console.log("kauforders: "+ buyorders.data.items[0].id)
+    
+    
+    
+  } catch(err) {
+    console.log(err)
+  } 
+}
+//SELL ORDER anzeigen
+async function getSellsOrder() {
+  
+  let params = {
+    status: 'active',
+    symbol: symbol,
+    side: 'sell'
+  }
+  try {
+    sellorders = await api.getOrders(params)
+    console.log("Sellorders: ")
+    sellorders.data.items.forEach(element => {
+      console.log(element.id)
+    });
+    
+    
+    
+  } catch(err) {
+    console.log(err)
+  } 
+}
 //ORDER anzeigen
 async function getOrder() {
   
   let params = {
     status: 'active',
-    symbol: symbol
+    symbol: symbol,
   }
   try {
     orders = await api.getOrders(params)
+    
+      //console.log(orders)
+      //console.log(orders.data.items[0].id)
+    
     
     
   } catch(err) {
@@ -201,7 +277,7 @@ function Sleep(milliseconds) {
 }
 
 function trysell()  {
-  if(ticker.data.price >= 0.9999 && orders.data.totalNum < settings.lines.length)  {
+  if(ticker.data.price >= 0.9999 && orders.data.totalNum < settings.lines.length && orderactive == true)  {
 
     orderid.forEach(element => {
       cancel(element)

@@ -1,7 +1,7 @@
 var telegram = require('telegram-bot-api');
 var chatid = "-1001180960690";
 var api = new telegram({
-  token: '973370114:AAEUM_LGOijS93QYwcMcCDDQLZVs9hbIKuM',
+  token: '900713379:AAEPXTCyrRLuQnWqwejLY44OwB78yqGnEgk', 
   updates: {
     enabled: true
 }
