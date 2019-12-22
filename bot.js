@@ -11,7 +11,6 @@ let telegrambot = require("./telegram.js");
 const shortid = require('shortid');
 const log = console.log;
 
-
 ///////////////////////////////////////////
 let symbol = "USDT-TUSD"; //symbol
 let programversion = "1.0.0"
@@ -24,27 +23,39 @@ let buyorders = [];
 let sellorders = [];
 let orderid = []; // array mit den tradeids zum canceln
 let orderactive = false; // variable für order 
-
+let initorder = false; // erste order beim programmstart
 
 let usdt = 0.0;
 let tusd = 0.0;
-
 
 let trades = 0;   // anzahl trades
 let gewinnProzent = 0;
 let unter = false;
 let oben = false;
 
-
 //start gui
-
 console.clear();
 telegrambot("ARBITRAGE gestartet")
 log(chalk.yellow("|- SECURUS ARBITRAGE v"+programversion+" -| " +chalk.green(" |- ALPHA -| ")));
 log();
 
-setInterval(getTicker,5000); // Initialisiere Grundfunktion
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+setInterval(getTicker,5000); // Initialisiere MAINFUNCTION
+/////////////////////////////    MAIN FUNCTION  TICKER  /////////////////////////////////////////////////////////////////////////////////////
+async function getTicker() {
+  try {
+    ticker = await api.getTicker(symbol)
+    await getAccounts()  // wallet prüfen
+    await getBuysOrder()
+    await getSellsOrder()
+    await gui()  // zeige werte
+    await initOrder() // starte ersten kauf - anschliessend setze variable initorder auf true
+    //await refillOrder()
+    //setTimeout(refillOrder,30000)
+    //await trysell()
+  } catch(err) {
+    console.log(err)
+  } 
+}
 // GUI
 async function gui(){
   //log(zeit); 
@@ -55,28 +66,46 @@ async function gui(){
   chalk.gray("_________________________________________________________________________________________________________________________"));
   log(chalk.gray("USDT  | balance: ") + chalk.magenta(usdt.balance) + chalk.gray(" | in use: ") + chalk.red(usdt.holds) + chalk.gray(" | available: ") + 
   chalk.green(usdt.available) + chalk.gray(" | TUSDT balance: ") + chalk.cyan(tusd.balance) + chalk.cyan(" TUSD") + chalk.gray(" | TUSDT avaliable: ") + chalk.dim(tusd.available) + chalk.dim(" TUSD"));
-  log(chalk.gray("Orders: ") + chalk.yellow(orders.data.totalNum));
+  log(chalk.gray("Orders: ") + chalk.yellow(buyorders.data.items.length));
   
 }
 //algo um kauf und sell zu definieren
-async function setzeOrder(){  
-    if (orderactive == false && orders.data.totalNum < 1 ){
+async function initOrder(){  
+  let i = 0;
+  let j = 1;
+     if (initorder == false && buyorders.data.items.length < 1 ){
+       telegrambot("starte initial buy");
+       while (i < settings.lines.length) {
+        await buy(shortid.generate(),settings.lines[String(i)],Tradingamount())
+        console.log("BUYLIMIT " + j + " Preis: " + (settings.lines[i]) + " betrag: "+ Tradingamount())
+        telegrambot("BUYLIMIT " + j + " Preis: " + (settings.lines[i]) + " betrag: "+ Tradingamount())
+        i+=1;
+        j+=1;
         
-      var i = 0;
-      var j = i + 1;
-      function f() {
-      buy(shortid.generate(),settings.lines[i],Tradingamount())//buy(String(i),String(settings.lines[i],"5"))
-      console.log("BUYLIMIT " + j + " Preis: " + settings.lines[i] + " betrag: "+ Tradingamount())
-      i++;
-      j++;
-      if( i < settings.lines.length ){
-        setTimeout( f, 1000 );
-    }
+       }
+      initorder = true; // setze inital order auf ok, damit nur beim programmstart gekauft wird
+      // await sell(shortid.generate(),"1.9","1")
+     }
+    
+    //  ////////////////////////////////////////////////////////////////////////////////////
+    //  else if (initorder == true && buyorders.data.items.length < settings.lines.length) { //wenn minimum ein bid erfolgreich war
+    //   await sell(shortid.generate(),"1.9","1")
+    // telegrambot("Verkaufe: - SELL ORDER: 0.9999 betrag: "+ usdt.balance)
+    // console.log("Verkaufe: - SELL ORDER: 0.9999 betrag: "+ usdt.balance)
+    //  }
+
 }
-f();
-    orderactive = true;
-}
+
+async function refillOrder(){  
   
+  let i = 0;
+  let j = 1;
+     if (initorder == true && buyorders.data.items.length < settings.lines.length && Tradingamount() > tusd.balance){
+
+      await buy(shortid.generate(),settings.lines[0],Tradingamount())
+      telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
+      console.log("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
+     }
 }
 
 //function zur Berechnung  des Tradingeinsatzes
@@ -84,52 +113,39 @@ function Tradingamount()  {
   let wert = settings.maxamount / settings.lines.length
   return wert.toFixed(2)
 }
-//
-//aktuelle preise ansehen - alle 5 Sekunden 
-async function getTicker() {
-    try {
-      ticker = await api.getTicker(symbol)
-      await getAccounts()  // wallet prüfen
-      await getOrder()
-      await getBuysOrder()
-      await getSellsOrder()
-      
+ 
+//////////////////////////////////////////////
+//SELL
+// Wallet ansehen - zeige assets
+async function trysell()  {
 
-      await gui()  // zeige werte
-      setzeOrder()
-      trysell()
-      meldePreise()
+  if (initorder == true && buyorders.data.items.length < settings.lines.length){
 
-      
+    await sell(shortid.generate(),"0.009",usdt.balance)
+    telegrambot("Nachkauf: - BUY ORDER: 0.9999 betrag: "+ usdt.balance)
+    console.log("Nachkauf: - BUY ORDER: 0.9999 betrag: "+ usdt.balance)
+   }
 
-      
-    } catch(err) {
-      console.log(err)
-    } 
-  }
 
-//funktion telegrambenachrichtigung
-function meldePreise()  {
-  
-  if (ticker.data.price <= 0.9994 && unter == false){
-    telegrambot("Preis USDT : " + ticker.data.price + " würde kaufen")
-    unter = true
-    oben = false
-  }
 
-  else if (ticker.data.price >= 0.9999 && oben == false){
-    trades++;
-  
-    telegrambot("Preis USDT : " + ticker.data.price + " würde verkaufen. Trades: " + trades)
-    
-    oben = true
-    unter = false
+
+  if(initorder == true &&  buyorders.data.items.length < settings.lines.length)  { //ticker.data.price >= 0.9999 &&
+    console.log("ok")
+    buyorders.data.items.forEach(element => {
+      cancel(element.id)
+    });
+
+    //sell(shortid.generate(),"0.9999",usdt.balance)
+    //telegrambot("SELL " +usdt.balance + " for 0.9999");
+
+
+    // buyorders.data.items.forEach(element => {
+    //   console.log(element.id)
+    // });
+    //initorder = false
   }
 }
 
-
-//////////////////////////////////////////////
-// Wallet ansehen - zeige assets
 async function getAccounts() {
   let params = {
     
@@ -143,8 +159,7 @@ async function getAccounts() {
         usdt = account.data.find(item => item.currency == "USDT");
         tusd = account.data.find(item => item.currency == "TUSD");
     });
-
-    
+ 
   } catch(err) {
     console.log(err)
   } 
@@ -166,9 +181,6 @@ async function getBuysOrder() {
     });
       //console.log(orders)
       // console.log("kauforders: "+ buyorders.data.items[0].id)
-    
-    
-    
   } catch(err) {
     console.log(err)
   } 
@@ -187,28 +199,6 @@ async function getSellsOrder() {
     sellorders.data.items.forEach(element => {
       console.log(element.id)
     });
-    
-    
-    
-  } catch(err) {
-    console.log(err)
-  } 
-}
-//ORDER anzeigen
-async function getOrder() {
-  
-  let params = {
-    status: 'active',
-    symbol: symbol,
-  }
-  try {
-    orders = await api.getOrders(params)
-    
-      //console.log(orders)
-      //console.log(orders.data.items[0].id)
-    
-    
-    
   } catch(err) {
     console.log(err)
   } 
@@ -222,17 +212,19 @@ async function getOrder() {
           symbol: 'USDT-TUSD',
           type: 'limit',
           price: price,
-          size: amount,
-          hidden: true
+          size: amount
         }
     let buyinfo = await api.placeOrder(buy)
-    orderid.push(buyinfo.data.orderId);
+    if (buyinfo.msg){ // debug wenn fehler kommz msg
+      console.log(buyinfo.msg)
+      telegrambot(buyinfo.msg)
+    } 
     
+
   } catch(err) {
     console.log(err)
   } 
 }
-
 ///////////////// SELL ORDER /////////////////
 async function sell(Oid,price,amount) {
   try {
@@ -242,19 +234,19 @@ async function sell(Oid,price,amount) {
           symbol: 'USDT-TUSD',
           type: 'limit',
           price: price,
-          size: amount,
-          hidden: true
+          funds: amount
         }
-    let buyinfo = await api.placeOrder(sell)
-    orderid.push(buyinfo.data.orderId);
-    
+    let buyinfo = await api.placeOrder(sell); 
+    if (buyinfo.msg){ // debug wenn fehler kommz msg
+      console.log(buyinfo.msg)
+      telegrambot(buyinfo.msg)
+    } 
   } catch(err) {
     console.log(err)
   } 
 }
 
-
-
+// ORDER LÖSCHEN
 async function cancel(element) {
   try {
       
@@ -263,13 +255,8 @@ async function cancel(element) {
           }
 
           let cancelinfo = await api.cancelOrder(cancel)
-          if(cancelinfo.data.cancelledOrderIds) {
-            orderid.shift()
-          }
           
-          
-          
-    
+
   } catch(err) {
     console.log(err)
   } 
@@ -281,15 +268,10 @@ function Sleep(milliseconds) {
 }
 
 function trysell()  {
-  if(ticker.data.price >= 0.9999 && orders.data.totalNum < settings.lines.length && orderactive == true)  {
+  if(ticker.data.price >= 0.9999 && buyorders.data.items.length < settings.lines.length && initorder == true)  {
     
     buyorders.data.items.forEach(element => {
       cancel(element.id)
-    });
-
-
-    orderid.forEach(element => {
-      cancel(element)
     });
 
     sell(shortid.generate(),"0.9999",usdt.balance)
