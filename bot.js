@@ -49,7 +49,8 @@ async function getTicker() {
     await getSellsOrder()
     await gui()  // zeige werte
     await initOrder() // starte ersten kauf - anschliessend setze variable initorder auf true
-    //await refillOrder()
+  
+    await refillOrder()
     //setTimeout(refillOrder,30000)
     //await trysell()
   } catch(err) {
@@ -66,11 +67,12 @@ async function gui(){
   chalk.gray("_________________________________________________________________________________________________________________________"));
   log(chalk.gray("USDT  | balance: ") + chalk.magenta(usdt.balance) + chalk.gray(" | in use: ") + chalk.red(usdt.holds) + chalk.gray(" | available: ") + 
   chalk.green(usdt.available) + chalk.gray(" | TUSDT balance: ") + chalk.cyan(tusd.balance) + chalk.cyan(" TUSD") + chalk.gray(" | TUSDT avaliable: ") + chalk.dim(tusd.available) + chalk.dim(" TUSD"));
-  log(chalk.gray("Orders: ") + chalk.yellow(buyorders.data.items.length));
+  log(chalk.gray("ACTIVE ORDERS: Buy | Sell ") + chalk.green(buyorders.data.items.length) + " | "+ chalk.red(sellorders.data.items.length));
   
 }
 //algo um kauf und sell zu definieren
 async function initOrder(){  
+  
   let i = 0;
   let j = 1;
      if (initorder == false && buyorders.data.items.length < 1 ){
@@ -84,7 +86,7 @@ async function initOrder(){
         
        }
       initorder = true; // setze inital order auf ok, damit nur beim programmstart gekauft wird
-      // await sell(shortid.generate(),"1.9","1")
+      
      }
     
     //  ////////////////////////////////////////////////////////////////////////////////////
@@ -97,10 +99,15 @@ async function initOrder(){
 }
 
 async function refillOrder(){  
-  
-  let i = 0;
-  let j = 1;
-     if (initorder == true && buyorders.data.items.length < settings.lines.length && Tradingamount() > tusd.balance){
+    let verkaufeusdt = parseFloat(usdt.available);
+    let amount = verkaufeusdt.toFixed(4);
+    
+  // await sell(shortid.generate(),"1.9","20")
+      if (initorder == false && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
+        await sell(shortid.generate(),settings.sellprice,amount)
+        telegrambot("Setze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available);
+      }
+      else if (initorder == false && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
@@ -234,7 +241,7 @@ async function sell(Oid,price,amount) {
           symbol: 'USDT-TUSD',
           type: 'limit',
           price: price,
-          funds: amount
+          size: amount
         }
     let buyinfo = await api.placeOrder(sell); 
     if (buyinfo.msg){ // debug wenn fehler kommz msg

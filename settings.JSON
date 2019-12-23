@@ -2,6 +2,7 @@
     "maxamount" :   "90",
     "symbol"    :   "USDT-TUSD",
     "lines"     :   ["0.9994","0.9990","0.9980"],
+    "sellprice" :   "0.9999",
   
     "apiKey": "5dfb891e1f137100083d697d",
     "secretKey": "5ea83175-d985-425b-8e7a-f0d4022e1043",
