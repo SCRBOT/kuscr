@@ -72,10 +72,11 @@ async function gui(){
 }
 //algo um kauf und sell zu definieren
 async function initOrder(){  
+  if(buyorders.data.items.length < settings.lines.length)
   
   let i = 0;
   let j = 1;
-     if (initorder == false && buyorders.data.items.length < 1 ){
+     if (buyorders.data.items.length < 1 ){
        telegrambot("starte initial buy");
        while (i < settings.lines.length) {
         await buy(shortid.generate(),settings.lines[String(i)],Tradingamount())
