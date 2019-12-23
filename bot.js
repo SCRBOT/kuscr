@@ -73,8 +73,8 @@ async function gui(){
 async function initOrder(){  
  
   
-  let i = 0;
-  let j = 1;
+  var i = 0;
+  var j = 1;
      if (buyorders.data.items.length < 1 ){
        telegrambot("starte initial buy");
        while (i < settings.lines.length) {
@@ -125,7 +125,7 @@ async function refillOrder(){
 //function zur Berechnung  des Tradingeinsatzes
 function Tradingamount()  {
   let wert = settings.maxamount / settings.lines.length
-  return wert.toFixed(2)
+  return wert.toFixed(0)
 }
  
 //////////////////////////////////////////////
