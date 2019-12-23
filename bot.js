@@ -103,11 +103,11 @@ async function refillOrder(){
     let amount = verkaufeusdt.toFixed(4);
     
   // await sell(shortid.generate(),"1.9","20")
-      if (initorder == false && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
+      if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
         await sell(shortid.generate(),settings.sellprice,amount)
         telegrambot("Setze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available);
       }
-      else if (initorder == false && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
+      else if (initorder == true && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
