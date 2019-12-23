@@ -30,8 +30,7 @@ let tusd = 0.0;
 
 let trades = 0;   // anzahl trades
 let gewinnProzent = 0;
-let unter = false;
-let oben = false;
+
 
 //start gui
 console.clear();
@@ -104,11 +103,18 @@ async function refillOrder(){
     let amount = verkaufeusdt.toFixed(4);
     
   // await sell(shortid.generate(),"1.9","20")
-      if (initorder == false && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
+      if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
         await sell(shortid.generate(),settings.sellprice,amount)
-        telegrambot("Setze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available);
+        trades++;
+        gewinnProzent = (tusd.available * 100 / settings.maxamount) - 100;
+        console.log("gewinn: "+gewinnProzent);
+        console.log("trades: "+trades);
+        telegrambot("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent);
+        
+        //amount jetzt x 100 / settingsamount - 100 = %
+
       }
-      else if (initorder == false && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
+      else if (initorder == true && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
