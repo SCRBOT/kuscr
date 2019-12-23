@@ -49,8 +49,8 @@ async function getTicker() {
     await gui()  // zeige werte
     await initOrder() // starte ersten kauf - anschliessend setze variable initorder auf true
   
-    await refillOrder()
-    //setTimeout(refillOrder,30000)
+    //await refillOrder()
+    setTimeout(refillOrder,5000)
     //await trysell()
   } catch(err) {
     console.log(err)
