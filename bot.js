@@ -71,7 +71,7 @@ async function gui(){
 }
 //algo um kauf und sell zu definieren
 async function initOrder(){  
-  if(buyorders.data.items.length < settings.lines.length)
+ 
   
   let i = 0;
   let j = 1;
