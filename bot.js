@@ -75,7 +75,7 @@ async function initOrder(){
   
   var i = 0;
   var j = 1;
-     if (buyorders.data.items.length < 1 ){
+     if (buyorders.data.items.length < 1 && initorder == false){
        telegrambot("starte initial buy");
        while (i < settings.lines.length) {
         await buy(shortid.generate(),settings.lines[String(i)],Tradingamount())
