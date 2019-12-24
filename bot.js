@@ -99,14 +99,20 @@ async function initOrder(){
 }
 
 async function refillOrder(){  
+
     let verkaufeusdt = parseFloat(usdt.available);
     let amount = verkaufeusdt.toFixed(4);
+
+      if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initorder == true){
+        initorder = false;
+        telegrambot("Abverkauf - führe inital buy durch");
+      }
     
   // await sell(shortid.generate(),"1.9","20")
-      if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
+      else if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
         await sell(shortid.generate(),settings.sellprice,amount)
         trades++;
-        gewinnProzent = (tusd.available * 100 / settings.maxamount) - 100;
+        gewinnProzent = (tusd.balance * 100 / settings.maxamount) - 100;
         console.log("gewinn: "+gewinnProzent);
         console.log("trades: "+trades);
         telegrambot("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent);
