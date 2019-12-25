@@ -25,6 +25,8 @@ let orderid = []; // array mit den tradeids zum canceln
 let orderactive = false; // variable für order 
 let initorder = false; // erste order beim programmstart
 
+let ausgangtusdt = 0;
+
 let usdt = 0.0;
 let tusd = 0.0;
 
@@ -71,7 +73,7 @@ async function gui(){
 }
 //algo um kauf und sell zu definieren
 async function initOrder(){  
- 
+  ausgangtusdt = tusd.balance;
   
   var i = 0;
   var j = 1;
@@ -109,10 +111,10 @@ async function refillOrder(){
       }
     
   // await sell(shortid.generate(),"1.9","20")
-      else if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
+      else if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 5) {
         await sell(shortid.generate(),settings.sellprice,amount)
         trades++;
-        gewinnProzent = (tusd.balance * 100 / settings.maxamount) - 100;
+        gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
         console.log("gewinn: "+gewinnProzent);
         console.log("trades: "+trades);
         telegrambot("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent);
