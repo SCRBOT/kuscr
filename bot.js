@@ -23,7 +23,9 @@ let buyorders = [];
 let sellorders = [];
 let orderid = []; // array mit den tradeids zum canceln
 let orderactive = false; // variable für order 
-let initorder = false; // erste order beim programmstart
+let initordergemacht = false; // erste order beim programmstart
+let nachgekauft = false;
+let verkaufen = false;
 
 let ausgangtusdt = 0;
 
@@ -71,13 +73,13 @@ async function gui(){
   log(chalk.gray("ACTIVE ORDERS: Buy | Sell ") + chalk.green(buyorders.data.items.length) + " | "+ chalk.red(sellorders.data.items.length));
   
 }
-//algo um kauf und sell zu definieren
+// INITIAL ORDER BEIM START
 async function initOrder(){  
   ausgangtusdt = tusd.balance;
   
   var i = 0;
   var j = 1;
-     if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initorder == false){
+     if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == false){
        telegrambot("starte initial buy");
        while (i < settings.lines.length) {
         await buy(shortid.generate(),settings.lines[String(i)],Tradingamount())
@@ -87,17 +89,22 @@ async function initOrder(){
         j+=1;
         
        }
-      initorder = true; // setze inital order auf ok, damit nur beim programmstart gekauft wird
+      initordergemacht = true;
       
      }
     
-    //  ////////////////////////////////////////////////////////////////////////////////////
-    //  else if (initorder == true && buyorders.data.items.length < settings.lines.length) { //wenn minimum ein bid erfolgreich war
-    //   await sell(shortid.generate(),"1.9","1")
-    // telegrambot("Verkaufe: - SELL ORDER: 0.9999 betrag: "+ usdt.balance)
-    // console.log("Verkaufe: - SELL ORDER: 0.9999 betrag: "+ usdt.balance)
-    //  }
+ 
+}
+//NEUE FUNKTIONEN
+// let initordergemacht = false; // erste order beim programmstart
+// let nachgekauft = false;
+// let verkaufen = false;
 
+// WENN eine buyorder nicht da, und initorder durhgeführt, dann kaufe einmal amount nach
+function nachKaufen() {
+  if (buyorders.data.items.length < settings.lines.length && initordergemacht == true){
+
+}
 }
 
 async function refillOrder(){  
@@ -107,11 +114,11 @@ async function refillOrder(){
 
       if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initorder == true){
         initorder = false;
-        telegrambot("Abverkauf - führe inital buy durch");
+        telegrambot("INFO buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length + "initordervariable: ")+initorder;
       }
     
   // await sell(shortid.generate(),"1.9","20")
-      else if (initorder == true && buyorders.data.items.length < settings.lines.length && usdt.available > 5) {
+      else if (initordergemacht == true && buyorders.data.items.length < settings.lines.length && usdt.available > 5) {
         await sell(shortid.generate(),settings.sellprice,amount)
         trades++;
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
@@ -122,7 +129,7 @@ async function refillOrder(){
         //amount jetzt x 100 / settingsamount - 100 = %
 
       }
-      else if (initorder == true && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
+      else if (initordergemacht == true && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
