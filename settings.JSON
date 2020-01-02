@@ -7,5 +7,9 @@
     "apiKey": "5dfb891e1f137100083d697d",
     "secretKey": "5ea83175-d985-425b-8e7a-f0d4022e1043",
     "passphrase": "Jordan111",
-    "environment": "live"
+    "environment": "live",
+
+    "telegramchatid": "-394686882",
+    "telegrambottoken": "900713379:AAEPXTCyrRLuQnWqwejLY44OwB78yqGnEgk"
+    
 }
