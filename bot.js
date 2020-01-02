@@ -131,9 +131,9 @@ async function refillOrder(){
     let verkaufeusdt = parseFloat(usdt.available);
     let amount = verkaufeusdt.toFixed(4);
 
-      if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initorder == true){
-        initorder = false;
-        telegrambot("INFO buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length + "initordervariable: ")+initorder;
+      if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == true){
+        initordergemacht = false;
+        telegrambot("INFO buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length + "initordervariable: ")+initordergemacht;
       }
     
   // await sell(shortid.generate(),"1.9","20")

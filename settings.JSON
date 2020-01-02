@@ -1,15 +1,15 @@
 {
-    "maxamount" :   "100",
+    "maxamount" :   "50",
     "symbol"    :   "USDT-TUSD",
-    "lines"     :   ["0.980","0.975","0.97","0.9965","0.9960","0.9955"],
+    "lines"     :   ["0.998","0.997","0.996"],
     "sellprice" :   "0.9999",
   
-    "apiKey": "5e0e2d5caa8e51000906de95",
-    "secretKey": "124683ff-77d5-4527-aa4b-ab856eeb1ca8",
-    "passphrase": "Securus",
+    "apiKey": "5dfb891e1f137100083d697d",
+    "secretKey": "5ea83175-d985-425b-8e7a-f0d4022e1043",
+    "passphrase": "Jordan111",
     "environment": "live",
 
-    "telegramchatid": "-394686881",
-    "telegrambottoken": "827300666:AAGcwlBLPIEwDHnIybYRV0Y6hC1BHmY0D6s"
+    "telegramchatid": "-394686882",
+    "telegrambottoken": "900713379:AAEPXTCyrRLuQnWqwejLY44OwB78yqGnEgk"
     
 }
