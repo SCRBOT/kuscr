@@ -50,12 +50,12 @@ console.clear();
 telegrambot("ARBITRAGE gestartet")
 log(chalk.yellow("|- SECURUS ARBITRAGE v"+programversion+" -| " +chalk.green(" |- ALPHA -| ")));
 log();
-//console.log(date + " - " + month)
+
 if (date < tag && month <= monat) {
-  //console.log("abgelaufen");
+  
   log(chalk.green("LIZENZ gültig"));
   telegrambot("LIZENZ gültig")
-  setInterval(getTicker,5000)
+  setInterval(getTicker,settings.interval)
 }
 else {
   log(chalk.red("LIZENZ abgelaufen"));
@@ -223,9 +223,9 @@ async function getBuysOrder() {
   }
   try {
     buyorders = await api.getOrders(params)
-    console.log("Kauforders: ")
+    //console.log("Kauforders: ")
     buyorders.data.items.forEach(element => {
-      console.log(element.id)
+     // console.log(element.id)
     });
       //console.log(orders)
       // console.log("kauforders: "+ buyorders.data.items[0].id)
@@ -243,9 +243,9 @@ async function getSellsOrder() {
   }
   try {
     sellorders = await api.getOrders(params)
-    console.log("Sellorders: ")
+    //console.log("Sellorders: ")
     sellorders.data.items.forEach(element => {
-      console.log(element.id)
+     // console.log(element.id)
     });
   } catch(err) {
     console.log(err)
