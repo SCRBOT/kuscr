@@ -1,4 +1,5 @@
 var telegram = require('telegram-bot-api');
+let fs = require('fs');
 let settings = JSON.parse(fs.readFileSync('settings.JSON', 'utf8'));
 settings.telegramchatid
 //var chatid = "-394686882";
