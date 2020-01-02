@@ -1,11 +1,13 @@
 // Copyrights by SECURUS
 "use strict"
+let fs = require('fs');
+let settings = JSON.parse(fs.readFileSync('settings.JSON', 'utf8'));
 const api = require('kucoin-node-api')
 const config = {
-    apiKey: '5dfb891e1f137100083d697d',
-    secretKey: '5ea83175-d985-425b-8e7a-f0d4022e1043',
-    passphrase: 'Jordan111',
-    environment: 'live'
+    apiKey: settings.apiKey,
+    secretKey: settings.secretKey,
+    passphrase: settings.passphrase,
+    environment: settings.environment
   }
 
   api.init(config)

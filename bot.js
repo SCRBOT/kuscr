@@ -26,6 +26,7 @@ let orderactive = false; // variable für order
 let initordergemacht = false; // erste order beim programmstart
 let nachgekauft = false;
 let verkaufen = false;
+let lizenz = false;
 
 let ausgangtusdt = 0;
 
@@ -34,15 +35,31 @@ let tusd = 0.0;
 
 let trades = 0;   // anzahl trades
 let gewinnProzent = 0;
+let date_ob = new Date();
+let date = (date_ob.getDate());
+let month = ((date_ob.getMonth() + 1));
+//LIZENZ
+let tag = 15;
+let monat = 1;
+//LIZENZ
 
 
 //start gui
 console.clear();
+
 telegrambot("ARBITRAGE gestartet")
 log(chalk.yellow("|- SECURUS ARBITRAGE v"+programversion+" -| " +chalk.green(" |- ALPHA -| ")));
 log();
-
-setInterval(getTicker,5000); // Initialisiere MAINFUNCTION
+//console.log(date + " - " + month)
+if (date < tag && month <= monat) {
+  //console.log("abgelaufen");
+  log(chalk.green("LIZENZ gültig"));
+  telegrambot("LIZENZ gültig")
+  setInterval(getTicker,5000)
+}
+else log(chalk.red("LIZENZ abgelaufen"));
+telegrambot("LIZENZ abgelaufen")
+// Initialisiere MAINFUNCTION
 /////////////////////////////    MAIN FUNCTION  TICKER  /////////////////////////////////////////////////////////////////////////////////////
 async function getTicker() {
   try {
