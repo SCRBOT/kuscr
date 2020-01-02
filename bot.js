@@ -38,7 +38,7 @@ let gewinnProzent = 0;
 let date_ob = new Date();
 let date = (date_ob.getDate());
 let month = ((date_ob.getMonth() + 1));
-//LIZENZ
+//LIZENZ 
 let tag = 15;
 let monat = 1;
 //LIZENZ
