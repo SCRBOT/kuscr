@@ -10,10 +10,11 @@ const chalk = require('chalk');
 let telegrambot = require("./telegram.js");
 const shortid = require('shortid');
 const log = console.log;
+var cron = require('node-cron');
 
 ///////////////////////////////////////////
 let symbol = "USDT-TUSD"; //symbol
-let programversion = "1.0.0"
+let programversion = "1.0.1"
 ///////////////////////////////////////////
 
 let ticker; //variable für preise
@@ -47,14 +48,14 @@ let monat = 1;
 //start gui
 console.clear();
 
-telegrambot("ARBITRAGE gestartet")
+telegrambot("|- SECURUS ARBITRAGE v"+programversion+" -|  |- ALPHA -| ")
 log(chalk.yellow("|- SECURUS ARBITRAGE v"+programversion+" -| " +chalk.green(" |- ALPHA -| ")));
 log();
 
 if (date < tag && month <= monat) {
   
-  log(chalk.green("LIZENZ gültig"));
-  telegrambot("LIZENZ gültig")
+  log(chalk.green("LIZENZ is valid"));
+  telegrambot("LIZENZ is valid")
   setInterval(getTicker,settings.interval)
 }
 else {
@@ -90,6 +91,15 @@ async function gui(){
   log(chalk.gray("USDT  | balance: ") + chalk.magenta(usdt.balance) + chalk.gray(" | in use: ") + chalk.red(usdt.holds) + chalk.gray(" | available: ") + 
   chalk.green(usdt.available) + chalk.gray(" | TUSDT balance: ") + chalk.cyan(tusd.balance) + chalk.cyan(" TUSD") + chalk.gray(" | TUSDT avaliable: ") + chalk.dim(tusd.available) + chalk.dim(" TUSD"));
   log(chalk.gray("ACTIVE ORDERS: Buy | Sell ") + chalk.green(buyorders.data.items.length) + " | "+ chalk.red(sellorders.data.items.length));
+
+  // if ((message.text == "info" || message.text == "Info") && message.from.id == settings.ownerid) {
+  //   let nachricht = "Hallo Meister";
+  //   api.sendMessage({
+  //             chat_id: chatid,
+  //             parse_mode: "HTML",
+  //             text: nachricht
+  //           })
+  // }
   
 }
 // INITIAL ORDER BEIM START
@@ -114,6 +124,13 @@ async function initOrder(){
     
  
 }
+cron.schedule('0 * * * *', () => {
+  telegrambot("orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellorders.data.items.length + "\n" +
+  "price: " + ticker.data.price + "\n" +
+  "available: "+ usdt.available + " USDT \n:dollar: available: "+ tusd.available + " TUSD"
+)});
+
+//CRON
 //NEUE FUNKTIONEN
 // let initordergemacht = false; // erste order beim programmstart
 // let nachgekauft = false;
@@ -331,6 +348,8 @@ function trysell()  {
 
   }
 }
+
+
   
   
   
