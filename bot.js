@@ -57,8 +57,10 @@ if (date < tag && month <= monat) {
   telegrambot("LIZENZ gültig")
   setInterval(getTicker,5000)
 }
-else log(chalk.red("LIZENZ abgelaufen"));
-telegrambot("LIZENZ abgelaufen")
+else {
+  log(chalk.red("LIZENZ abgelaufen"));
+  telegrambot("LIZENZ abgelaufen")
+} 
 // Initialisiere MAINFUNCTION
 /////////////////////////////    MAIN FUNCTION  TICKER  /////////////////////////////////////////////////////////////////////////////////////
 async function getTicker() {
