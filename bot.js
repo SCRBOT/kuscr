@@ -56,7 +56,7 @@ if (date < tag && month <= monat) {
   
   log(chalk.green("LICENCE is valid"));
   telegrambot("LICENCE is valid")
-  setInterval(getTicker,settings.interval)
+  setInterval(getTicker,5000) //settings.interval
 }
 else {
   log(chalk.red("Please buy a LICENCE"));
