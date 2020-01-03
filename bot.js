@@ -54,13 +54,13 @@ log();
 
 if (date < tag && month <= monat) {
   
-  log(chalk.green("LIZENZ is valid"));
-  telegrambot("LIZENZ is valid")
+  log(chalk.green("LICENCE is valid"));
+  telegrambot("LICENCE is valid")
   setInterval(getTicker,settings.interval)
 }
 else {
-  log(chalk.red("LIZENZ abgelaufen"));
-  telegrambot("LIZENZ abgelaufen")
+  log(chalk.red("Please buy a LICENCE"));
+  telegrambot("Please buy a LICENCE")
 } 
 // Initialisiere MAINFUNCTION
 /////////////////////////////    MAIN FUNCTION  TICKER  /////////////////////////////////////////////////////////////////////////////////////
@@ -105,8 +105,8 @@ async function initOrder(){
        telegrambot("starte initial buy");
        while (i < settings.lines.length) {
         await buy(shortid.generate(),settings.lines[String(i)],Tradingamount())
-        console.log("BUYLIMIT " + j + " Preis: " + (settings.lines[i]) + " betrag: "+ Tradingamount())
-        telegrambot("BUYLIMIT " + j + " Preis: " + (settings.lines[i]) + " betrag: "+ Tradingamount())
+        console.log("BUYLIMIT " + j + " Price: " + (settings.lines[i]) + " amount: "+ Tradingamount())
+        telegrambot("BUYLIMIT " + j + " Price: " + (settings.lines[i]) + " amount: "+ Tradingamount())
         i+=1;
         j+=1;
         
@@ -136,7 +136,7 @@ async function refillOrder(){
 
       if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == true){
         initordergemacht = false;
-        telegrambot("INFO buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length + "initordervariable: ")+initordergemacht;
+        telegrambot("INFO DEBUG  buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length + "initordervariable: ")+initordergemacht;
       }
     
   // await sell(shortid.generate(),"1.9","20")
@@ -146,7 +146,7 @@ async function refillOrder(){
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
         console.log("gewinn: "+gewinnProzent);
         console.log("trades: "+trades);
-        telegrambot("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent);
+        telegrambot("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent.toFixed(8));
         
         //amount jetzt x 100 / settingsamount - 100 = %
 
