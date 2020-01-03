@@ -3,6 +3,7 @@ let fs = require('fs');
 let settings = JSON.parse(fs.readFileSync('settings.JSON', 'utf8'));
 settings.telegramchatid
 //var chatid = "-394686882";
+//-1001413092859
 let chatid = settings.telegramchatid;
 var api = new telegram({
   token: settings.telegrambottoken, 

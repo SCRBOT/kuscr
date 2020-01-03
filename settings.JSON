@@ -1,8 +1,8 @@
 {
     "maxamount" :   "90",
     "symbol"    :   "USDT-TUSD",
-    "lines"     :   ["0.998","0.997","0.996"],
-    "sellprice" :   "0.9999",
+    "lines"     :   ["0.9980","0.9970","0.9960"],
+    "sellprice" :   "0.9998",
   
     "apiKey": "5dfb891e1f137100083d697d",
     "secretKey": "5ea83175-d985-425b-8e7a-f0d4022e1043",
@@ -10,9 +10,8 @@
     "environment": "live",
 
     "telegramchatid": "-1001413092859",
-    "telegrambottoken": "900713379:AAEPXTCyrRLuQnWqwejLY44OwB78yqGnEgk",
+    "telegrambottoken": "900713379:AAEPXTCyrRLuQnWqwejLY44OwB78yqGnEgk"
 
-    "interval": "5000"
 
 
     

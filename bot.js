@@ -1,6 +1,9 @@
 // Copyrights by SECURUS
 "use strict"
 let fs = require('fs');
+let logger = fs.createWriteStream('debug.txt', {
+  flags: 'a' // 'a' means appending (old data will be preserved)
+})
 let settings = JSON.parse(fs.readFileSync('settings.JSON', 'utf8'));
 
 const kucoin = require('./kucoin.js')
@@ -14,26 +17,17 @@ var cron = require('node-cron');
 
 ///////////////////////////////////////////
 let symbol = "USDT-TUSD"; //symbol
-let programversion = "1.0.1"
+let programversion = "1.0.3"
 ///////////////////////////////////////////
 
 let ticker; //variable für preise
 let account; // walletinhalt
-let orders; //tradeinformation
 let buyorders = [];
 let sellorders = [];
-let orderid = []; // array mit den tradeids zum canceln
-let orderactive = false; // variable für order 
 let initordergemacht = false; // erste order beim programmstart
-let nachgekauft = false;
-let verkaufen = false;
-let lizenz = false;
-
 let ausgangtusdt = 0;
-
 let usdt = 0.0;
 let tusd = 0.0;
-
 let trades = 0;   // anzahl trades
 let gewinnProzent = 0;
 let date_ob = new Date();
@@ -49,18 +43,21 @@ let monat = 1;
 console.clear();
 
 telegrambot("|- SECURUS ARBITRAGE v"+programversion+" -|  |- ALPHA -| ")
+logger.write("|- SECURUS ARBITRAGE v"+programversion+" -|  |- ALPHA -|\n");
 log(chalk.yellow("|- SECURUS ARBITRAGE v"+programversion+" -| " +chalk.green(" |- ALPHA -| ")));
-log();
+log(chalk.magenta("LOGGER aktivated ... & some fixes"));
 
 if (date < tag && month <= monat) {
   
   log(chalk.green("LICENCE is valid"));
-  telegrambot("LICENCE is valid")
-  setInterval(getTicker,5000) //settings.interval
+  telegrambot("LICENCE is valid");
+  logger.write("LICENCE is valid\n");
+  setInterval(getTicker,3000) //settings.interval
 }
 else {
   log(chalk.red("Please buy a LICENCE"));
-  telegrambot("Please buy a LICENCE")
+  telegrambot("Please buy a LICENCE");
+  logger.write("Please buy a LICENCE\n");
 } 
 // Initialisiere MAINFUNCTION
 /////////////////////////////    MAIN FUNCTION  TICKER  /////////////////////////////////////////////////////////////////////////////////////
@@ -72,16 +69,17 @@ async function getTicker() {
     await getSellsOrder()
     await gui()  // zeige werte
     await initOrder() // starte ersten kauf - anschliessend setze variable initorder auf true
-    //await refillOrder()
-    setTimeout(refillOrder,5000)
+    await refillOrder()
+    //setTimeout(refillOrder,5000)
     //await trysell()
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
 // GUI
 async function gui(){
-  console.clear()
+  //console.clear()
   log(chalk.gray("_________________________________________________________________________________________________________________________"));
   log(chalk.gray(" | price: ") + chalk.magenta(ticker.data.price) + chalk.gray(" | bestAsk: ") + chalk.red(ticker.data.bestAsk) + chalk.gray(" | bestBid: ") + 
   chalk.green(ticker.data.bestBid) + chalk.gray(" | bestAskSize: ") + chalk.cyan(ticker.data.bestAskSize) + chalk.cyan(" USDT") + chalk.gray(" | bestBidSize: ") + chalk.dim(ticker.data.bestBidSize) + chalk.dim(" USD \n") +
@@ -93,7 +91,16 @@ async function gui(){
 }
 // INITIAL ORDER BEIM START
 async function initOrder(){  
-  ausgangtusdt = tusd.balance;
+  if (ausgangtusdt == 0) {
+    ausgangtusdt = tusd.balance
+  }
+
+  
+  if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == true){
+    initordergemacht = false;
+    telegrambot("INFO DEBUG  buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length);
+    logger.write("alles verkauft starte gleich init buy\n");
+  }
   
   var i = 0;
   var j = 1;
@@ -102,26 +109,44 @@ async function initOrder(){
 
 
      if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == false){
+      initordergemacht = true;
+      
        telegrambot("starte initial buy");
        while (i < settings.lines.length) {
         await buy(shortid.generate(),settings.lines[String(i)],Tradingamount())
         console.log("BUYLIMIT " + j + " Price: " + (settings.lines[i]) + " amount: "+ Tradingamount())
         telegrambot("BUYLIMIT " + j + " Price: " + (settings.lines[i]) + " amount: "+ Tradingamount())
+        logger.write("BUYLIMIT " + j + " Price: " + (settings.lines[i]) + " amount: "+ Tradingamount()+"\n");
         i+=1;
         j+=1;
         
        }
-      initordergemacht = true;
+      
       
      }
     
  
 }
 cron.schedule('0 * * * *', () => {
+  gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
+
+
   telegrambot("orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellorders.data.items.length + "\n" +
   "price: " + ticker.data.price + "\n" +
-  "available: "+ usdt.available + " USDT \navailable: "+ tusd.available + " TUSD"
-)});
+  "tusd balance: " + tusd.balance + "\n" +
+  "available: "+ usdt.available + " USDT \navailable: "+ tusd.available + " TUSD\n" +
+  "trades: "+trades + "\ngewinn: "+ gewinnProzent.toFixed(4) +" %"
+)
+logger.write("orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellorders.data.items.length + "\n" +
+"price: " + ticker.data.price + "\n" +
+"tusd balance: " + tusd.balance + "\n" +
+"available: "+ usdt.available + " USDT \navailable: "+ tusd.available + " TUSD\n" +
+"trades: "+trades + "\ngewinn: "+ gewinnProzent.toFixed(4) +" %"
+
+)
+
+
+});
 
 //CRON
 //NEUE FUNKTIONEN
@@ -135,28 +160,29 @@ async function refillOrder(){
     let verkaufeusdt = parseFloat(usdt.available);
     let amount = verkaufeusdt.toFixed(4);
 
-      if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == true){
-        initordergemacht = false;
-        telegrambot("INFO DEBUG  buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length + "initordervariable: ")+initordergemacht;
-      }
     
   // await sell(shortid.generate(),"1.9","20")
-      else if (initordergemacht == true && buyorders.data.items.length < settings.lines.length && usdt.available > 1) {
-        await sell(shortid.generate(),settings.sellprice,amount)
+      if (buyorders.data.items.length < settings.lines.length && parseFloat(usdt.available) > parseFloat(Tradingamount())){
+        await sell(shortid.generate(),settings.sellprice,Tradingamount()) //Tradingamount() war amount
         trades++;
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
         console.log("gewinn: "+gewinnProzent);
         console.log("trades: "+trades);
         telegrambot("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent.toFixed(8));
+        logger.write("Trade: "+trades+ "\nSetze Sellorder - Preis: " + settings.sellprice + " amount: "+ usdt.available + "\nGewinn % : "+gewinnProzent.toFixed(8)+"\n");
         
         //amount jetzt x 100 / settingsamount - 100 = %
 
       }
-      else if (initordergemacht == true && buyorders.data.items.length < settings.lines.length && Tradingamount() < tusd.available){
+      else if (buyorders.data.items.length < settings.lines.length && parseFloat(tusd.available) > parseFloat(Tradingamount())){
+        
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
       console.log("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
+      logger.write("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount()+"\n")
+        
+      //getTicker()
      }
 }
 
@@ -182,6 +208,7 @@ async function getAccounts() {
  
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
 
@@ -197,12 +224,13 @@ async function getBuysOrder() {
     buyorders = await api.getOrders(params)
     //console.log("Kauforders: ")
     buyorders.data.items.forEach(element => {
-     // console.log(element.id)
+     //console.log(element.id)
     });
       //console.log(orders)
       // console.log("kauforders: "+ buyorders.data.items[0].id)
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
 //SELL ORDER anzeigen
@@ -217,10 +245,11 @@ async function getSellsOrder() {
     sellorders = await api.getOrders(params)
     //console.log("Sellorders: ")
     sellorders.data.items.forEach(element => {
-     // console.log(element.id)
+    // console.log(element)
     });
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
  ///////////////// BUY ORDER /////////////////
@@ -238,11 +267,13 @@ async function getSellsOrder() {
     if (buyinfo.msg){ // debug wenn fehler kommz msg
       console.log(buyinfo.msg)
       telegrambot(buyinfo.msg)
+      logger.write(buyinfo.msg)
     } 
     
 
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
 ///////////////// SELL ORDER /////////////////
@@ -260,9 +291,11 @@ async function sell(Oid,price,amount) {
     if (buyinfo.msg){ // debug wenn fehler kommz msg
       console.log(buyinfo.msg)
       telegrambot(buyinfo.msg)
+      logger.write(buyinfo.msg)
     } 
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
 
@@ -279,6 +312,7 @@ async function cancel(element) {
 
   } catch(err) {
     console.log(err)
+    logger.write(err)
   } 
 }
 
