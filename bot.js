@@ -96,7 +96,7 @@ async function initOrder(){
   }
 
   
-  if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == true){
+  if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht === true){
     initordergemacht = false;
     telegrambot("INFO DEBUG  buyanzahl : "+ buyorders.data.items.length + " sellanzahl : " + sellorders.data.items.length);
     logger.write("alles verkauft starte gleich init buy\n");
@@ -108,7 +108,7 @@ async function initOrder(){
     
 
 
-     if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht == false){
+     if (buyorders.data.items.length < 1 && sellorders.data.items.length < 1 && initordergemacht === false){
       initordergemacht = true;
       
        telegrambot("starte initial buy");
@@ -162,7 +162,7 @@ async function refillOrder(){
 
     
   // await sell(shortid.generate(),"1.9","20")
-      if (buyorders.data.items.length < settings.lines.length && initordergemacht == true && parseFloat(usdt.available) > parseFloat(Tradingamount())){
+      if (buyorders.data.items.length < settings.lines.length && initordergemacht === true && parseFloat(usdt.available) > parseFloat(Tradingamount())){
         await sell(shortid.generate(),settings.sellprice,Tradingamount()) //Tradingamount() war amount
         trades++;
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
@@ -174,7 +174,7 @@ async function refillOrder(){
         //amount jetzt x 100 / settingsamount - 100 = %
 
       }
-      else if (buyorders.data.items.length < settings.lines.length && initordergemacht == true && parseFloat(tusd.available) > parseFloat(Tradingamount())){
+      else if (buyorders.data.items.length < settings.lines.length && initordergemacht === true && parseFloat(tusd.available) > parseFloat(Tradingamount())){
         
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
