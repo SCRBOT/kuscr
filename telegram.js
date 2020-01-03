@@ -17,15 +17,15 @@ api.on('message', function(message)
 {
   //console.log(message);
   console.log(message.from.first_name + "chatid: " + message.chat.id);
-
-  // if ((message.text == "info" || message.text == "Info") && message.from.id == settings.ownerid) {
-  //   let nachricht = "Hallo Meister";
-  //   api.sendMessage({
-  //             chat_id: chatid,
-  //             parse_mode: "HTML",
-  //             text: nachricht
-  //           })
-  // }
+  // && message.from.id == settings.ownerid
+  if (message.text == "info" || message.text == "Info") { 
+    let nachricht = "bin online ...";
+    api.sendMessage({
+              chat_id: chatid,
+              parse_mode: "HTML",
+              text: nachricht
+            })
+  }
 
 //   if (message.text == "Info" || message.text == "info"){
 //    let nachricht = "<b>USDT :</b> " + usdt + "  \n" +

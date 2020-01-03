@@ -1,5 +1,5 @@
 {
-    "maxamount" :   "50",
+    "maxamount" :   "90",
     "symbol"    :   "USDT-TUSD",
     "lines"     :   ["0.998","0.997","0.996"],
     "sellprice" :   "0.9999",
