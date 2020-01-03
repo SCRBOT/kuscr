@@ -68,7 +68,7 @@ async function getTicker() {
     await getBuysOrder()
     await getSellsOrder()
     await gui()  // zeige werte
-    console.log(initordergemacht)
+    
     await initOrder() // starte ersten kauf - anschliessend setze variable initorder auf true
     //await refillOrder()
     
@@ -132,7 +132,8 @@ cron.schedule('0 * * * *', () => {
   gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
 
 
-  telegrambot("orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellorders.data.items.length + "\n" +
+  telegrambot("|- SECURUS ARBITRAGE v"+programversion+" -|  |- ALPHA -|\n" +
+  "orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellorders.data.items.length + "\n" +
   "price: " + ticker.data.price + "\n" +
   "tusd balance: " + tusd.balance + "\n" +
   "available: "+ usdt.available + " USDT \navailable: "+ tusd.available + " TUSD\n" +
