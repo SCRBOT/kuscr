@@ -17,7 +17,7 @@ var cron = require('node-cron');
 
 ///////////////////////////////////////////
 let symbol = "USDT-TUSD"; //symbol
-let programversion = "1.0.3"
+let programversion = "1.0.4"
 ///////////////////////////////////////////
 
 let ticker; //variable für preise
@@ -122,7 +122,7 @@ async function initOrder(){
         
        }
       
-      
+       initordergemacht = true;
      }
     
  
@@ -162,7 +162,7 @@ async function refillOrder(){
 
     
   // await sell(shortid.generate(),"1.9","20")
-      if (buyorders.data.items.length < settings.lines.length && parseFloat(usdt.available) > parseFloat(Tradingamount())){
+      if (buyorders.data.items.length < settings.lines.length && initordergemacht == true && parseFloat(usdt.available) > parseFloat(Tradingamount())){
         await sell(shortid.generate(),settings.sellprice,Tradingamount()) //Tradingamount() war amount
         trades++;
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
@@ -174,7 +174,7 @@ async function refillOrder(){
         //amount jetzt x 100 / settingsamount - 100 = %
 
       }
-      else if (buyorders.data.items.length < settings.lines.length && parseFloat(tusd.available) > parseFloat(Tradingamount())){
+      else if (buyorders.data.items.length < settings.lines.length && initordergemacht == true && parseFloat(tusd.available) > parseFloat(Tradingamount())){
         
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
