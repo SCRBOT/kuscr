@@ -156,7 +156,7 @@ logger.write("orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellor
 // let verkaufen = false;
 
 async function refillOrder(){  
-  console.log("REFILL FUNCTION")
+  
   
 
     let verkaufeusdt = parseFloat(usdt.available);
@@ -165,7 +165,7 @@ async function refillOrder(){
     
   // await sell(shortid.generate(),"1.9","20")
       if (buyorders.data.items.length < settings.lines.length && parseFloat(usdt.available) > parseFloat(Tradingamount())){
-        console.log("SELL AKTIV")
+        logger.write("SELL AKTIV")
         await sell(shortid.generate(),settings.sellprice,Tradingamount()) //Tradingamount() war amount
         trades++;
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
@@ -178,7 +178,7 @@ async function refillOrder(){
 
       }
       else if (buyorders.data.items.length < settings.lines.length && initordergemacht === true && parseFloat(tusd.available) > parseFloat(Tradingamount())){
-        console.log("BUY AKTIV")
+        logger.write("BUY AKTIV")
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())

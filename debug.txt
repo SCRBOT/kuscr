@@ -235,3 +235,8 @@ LICENCE is valid
 BUYLIMIT 1 Price: 0.998 amount: 26
 BUYLIMIT 2 Price: 0.997 amount: 26
 BUYLIMIT 3 Price: 0.996 amount: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
