@@ -81,7 +81,7 @@ async function getTicker() {
 }
 // GUI
 async function gui(){
-  
+  console.clear()
   log(chalk.gray("_________________________________________________________________________________________________________________________"));
   log(chalk.gray(" | price: ") + chalk.magenta(ticker.data.price) + chalk.gray(" | bestAsk: ") + chalk.red(ticker.data.bestAsk) + chalk.gray(" | bestBid: ") + 
   chalk.green(ticker.data.bestBid) + chalk.gray(" | bestAskSize: ") + chalk.cyan(ticker.data.bestAskSize) + chalk.cyan(" USDT") + chalk.gray(" | bestBidSize: ") + chalk.dim(ticker.data.bestBidSize) + chalk.dim(" USD \n") +
@@ -130,6 +130,7 @@ cron.schedule('0 * * * *', () => {
 // let verkaufen = false;
 
 async function refillOrder(){  
+  
 
     let verkaufeusdt = parseFloat(usdt.available);
     let amount = verkaufeusdt.toFixed(4);
