@@ -182,4 +182,56 @@ tusd balance: 60.15242974
 available: 1.82781114 USDT 
 available: 9.25458274 TUSD
 trades: 2
-gewinn: 0.0000 %
+gewinn: 0.0000 %|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+Balance insufficient!Nachkauf: - BUY ORDER: 0.998 betrag: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+Balance insufficient!Nachkauf: - BUY ORDER: 0.998 betrag: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+Balance insufficient!Nachkauf: - BUY ORDER: 0.998 betrag: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+Balance insufficient!Nachkauf: - BUY ORDER: 0.998 betrag: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+Balance insufficient!Nachkauf: - BUY ORDER: 0.998 betrag: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26
+orders: Buy | Sell 3 | 0
+price: 0.9986
+tusd balance: 78.95428853
+available: 0.00000014 USDT 
+available: 1.11052253 TUSD
+trades: 0
+gewinn: 0.0000 %|- SECURUS ARBITRAGE v1.0.4 -|  |- ALPHA -|
+LICENCE is valid
+BUYLIMIT 1 Price: 0.998 amount: 26
+BUYLIMIT 2 Price: 0.997 amount: 26
+BUYLIMIT 3 Price: 0.996 amount: 26

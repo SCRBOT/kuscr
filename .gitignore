@@ -110,3 +110,4 @@ kucoin-linux
 kucoin-macos
 *.exe
 settings_old.JSON
+debug.txt

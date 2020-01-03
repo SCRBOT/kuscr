@@ -68,9 +68,10 @@ async function getTicker() {
     await getBuysOrder()
     await getSellsOrder()
     await gui()  // zeige werte
+    console.log(initordergemacht)
     await initOrder() // starte ersten kauf - anschliessend setze variable initorder auf true
-    await refillOrder()
-    //setTimeout(refillOrder,5000)
+    //await refillOrder()
+    
     //await trysell()
   } catch(err) {
     console.log(err)
@@ -87,7 +88,7 @@ async function gui(){
   log(chalk.gray("USDT  | balance: ") + chalk.magenta(usdt.balance) + chalk.gray(" | in use: ") + chalk.red(usdt.holds) + chalk.gray(" | available: ") + 
   chalk.green(usdt.available) + chalk.gray(" | TUSDT balance: ") + chalk.cyan(tusd.balance) + chalk.cyan(" TUSD") + chalk.gray(" | TUSDT avaliable: ") + chalk.dim(tusd.available) + chalk.dim(" TUSD"));
   log(chalk.gray("ACTIVE ORDERS: Buy | Sell ") + chalk.green(buyorders.data.items.length) + " | "+ chalk.red(sellorders.data.items.length));
-
+  
 }
 // INITIAL ORDER BEIM START
 async function initOrder(){  
@@ -121,11 +122,11 @@ async function initOrder(){
         j+=1;
         
        }
-      
-       initordergemacht = true;
+       
+       
      }
     
- 
+     setTimeout(refillOrder,6000)
 }
 cron.schedule('0 * * * *', () => {
   gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
@@ -155,6 +156,7 @@ logger.write("orders: Buy | Sell "+ buyorders.data.items.length + " | " + sellor
 // let verkaufen = false;
 
 async function refillOrder(){  
+  console.log("REFILL FUNCTION")
   
 
     let verkaufeusdt = parseFloat(usdt.available);
@@ -162,7 +164,8 @@ async function refillOrder(){
 
     
   // await sell(shortid.generate(),"1.9","20")
-      if (buyorders.data.items.length < settings.lines.length && initordergemacht === true && parseFloat(usdt.available) > parseFloat(Tradingamount())){
+      if (buyorders.data.items.length < settings.lines.length && parseFloat(usdt.available) > parseFloat(Tradingamount())){
+        console.log("SELL AKTIV")
         await sell(shortid.generate(),settings.sellprice,Tradingamount()) //Tradingamount() war amount
         trades++;
         gewinnProzent = (tusd.balance * 100 / ausgangtusdt ) - 100;
@@ -175,7 +178,7 @@ async function refillOrder(){
 
       }
       else if (buyorders.data.items.length < settings.lines.length && initordergemacht === true && parseFloat(tusd.available) > parseFloat(Tradingamount())){
-        
+        console.log("BUY AKTIV")
 
       await buy(shortid.generate(),settings.lines[0],Tradingamount())
       telegrambot("Nachkauf: - BUY ORDER: " + (settings.lines[0]) + " betrag: "+ Tradingamount())
